@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baghouse Size Calculator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .radio-group label, .checkbox-group label {
+            display: inline-block;
+            margin-right: 15px;
+            font-weight: normal;
+        }
+        input[type="number"] {
+            width: 150px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        #results {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f0f7fd;
+            border-left: 5px solid #3498db;
+            display: none;
+        }
+        .hidden {
+            display: none;
+        }
+        .parameter-section {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Baghouse Size Calculator</h1>
+        
+        <div class="form-group">
+            <label>Design Type:</label>
+            <div class="radio-group">
+                <input type="radio" id="modular" name="designType" value="MODULAR" checked>
+                <label for="modular">Modular</label>
+                <input type="radio" id="boltWeld" name="designType" value="BOLT_WELD">
+                <label for="boltWeld">Bolt/Weld</label>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label>Row Arrangement:</label>
+            <div class="radio-group">
+                <input type="radio" id="single" name="rowArrangement" value="SINGLE" checked>
+                <label for="single">Single</label>
+                <input type="radio" id="double" name="rowArrangement" value="DOUBLE">
+                <label for="double">Double</label>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="airFlow">Air Flow:</label>
+            <input type="number" id="airFlow" min="0" step="0.1" required>
+            <div class="radio-group">
+                <input type="radio" id="acfm" name="unitType" value="ACFM" checked>
+                <label for="acfm">ACFM</label>
+                <input type="radio" id="m3h" name="unitType" value="M3/h">
+                <label for="m3h">M3/h</label>
+            </div>
+        </div>
+        
+        <!-- Modular Parameters Section -->
+        <div id="modularParams" class="parameter-section">
+            <div class="section-title">Modular Design Parameters</div>
+            
+            <div class="form-group">
+                <label for="targetAcImperial">Target A/C Ratio (ft/min):</label>
+                <input type="number" id="targetAcImperial" min="0" step="0.1" value="4.0">
+            </div>
+            
+            <div class="form-group">
+                <label>Bag Length (ft):</label>
+                <div class="radio-group">
+                    <input type="radio" id="bag16" name="modularBagLength" value="16" checked>
+                    <label for="bag16">16 ft</label>
+                    <input type="radio" id="bag24" name="modularBagLength" value="24">
+                    <label for="bag24">24 ft</label>
+                    <input type="radio" id="bag28" name="modularBagLength" value="28">
+                    <label for="bag28">28 ft</label>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bolt/Weld Parameters Section -->
+        <div id="boltWeldParams" class="parameter-section hidden">
+            <div class="section-title">Bolt/Weld Design Parameters</div>
+            
+            <div class="form-group">
+                <label for="targetAcRatio">Target A/C Ratio (m/min):</label>
+                <input type="number" id="targetAcRatio" min="0" step="0.01" value="1.2">
+            </div>
+            
+            <div class="form-group">
+                <label>Bag Length (m):</label>
+                <div class="radio-group">
+                    <input type="radio" id="bagM8" name="boltWeldBagLength" value="8" checked>
+                    <label for="bagM8">8 m</label>
+                    <input type="radio" id="bagM9" name="boltWeldBagLength" value="9">
+                    <label for="bagM9">9 m</label>
+                    <input type="radio" id="bagM10" name="boltWeldBagLength" value="10">
+                    <label for="bagM10">10 m</label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Bags in Row:</label>
+                <div class="radio-group">
+                    <input type="radio" id="bags15" name="bagsInRow" value="15" checked>
+                    <label for="bags15">15</label>
+                    <input type="radio" id="bags18" name="bagsInRow" value="18">
+                    <label for="bags18">18</label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <button onclick="calculateBaghouse()">Calculate</button>
+        </div>
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        // Toggle parameter sections based on design type selection
+        document.querySelectorAll('input[name="designType"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.value === 'MODULAR') {
+                    document.getElementById('modularParams').classList.remove('hidden');
+                    document.getElementById('boltWeldParams').classList.add('hidden');
+                } else {
+                    document.getElementById('modularParams').classList.add('hidden');
+                    document.getElementById('boltWeldParams').classList.remove('hidden');
+                }
+            });
+        });
+
+        function calculateBaghouse() {
+            // Get input values
+            const designType = document.querySelector('input[name="designType"]:checked').value;
+            const rowArrangement = document.querySelector('input[name="rowArrangement"]:checked').value;
+            const airFlow = parseFloat(document.getElementById('airFlow').value);
+            const unitType = document.querySelector('input[name="unitType"]:checked').value;
+            
+            // Validate air flow
+            if (isNaN(airFlow) || airFlow <= 0) {
+                alert("Please enter a valid air flow value");
+                return;
+            }
+            
+            let results = '';
+            
+            if (designType === 'MODULAR') {
+                // Get modular-specific parameters
+                const targetAcImperial = parseFloat(document.getElementById('targetAcImperial').value);
+                const bagLength = parseFloat(document.querySelector('input[name="modularBagLength"]:checked').value);
+                
+                // Calculate modular baghouse
+                results = calculateModularBaghouse(airFlow, unitType, rowArrangement, targetAcImperial, bagLength);
+            } else {
+                // Get bolt/weld-specific parameters
+                const targetAcRatio = parseFloat(document.getElementById('targetAcRatio').value);
+                const bagLength = parseFloat(document.querySelector('input[name="boltWeldBagLength"]:checked').value);
+                const bagsInRow = parseInt(document.querySelector('input[name="bagsInRow"]:checked').value);
+                
+                // Calculate bolt/weld baghouse
+                results = calculateBoltWeldBaghouse(airFlow, unitType, rowArrangement, bagLength, bagsInRow, targetAcRatio);
+            }
+            
+            // Display results
+            document.getElementById('results').innerHTML = results;
+            document.getElementById('results').style.display = 'block';
+        }
+        
+        function calculateModularBaghouse(airFlow, unitType, rowArrangement, targetAcImperial, bagLength) {
+            // Convert to ACFM if input is in M3/h
+            let airFlowAcfm, airFlowM3Min;
+            if (unitType === 'M3/h') {
+                airFlowAcfm = airFlow * 0.589;
+                airFlowM3Min = airFlow / 60;
+            } else {
+                airFlowAcfm = airFlow;
+                airFlowM3Min = airFlow * 0.0283;
+            }
+            
+            // Target A/C ratio in metric for reference
+            const targetAcMetric = targetAcImperial * 0.3048;
+            
+            // Fixed bags per EMC flap
+            const bagsPerEmc = 75;
+            
+            // Find the smallest configuration that meets the A/C ratio requirement
+            let bestOption = null;
+            
+            for (let numModules = 1; numModules <= 10; numModules++) {
+                // Skip odd numbers of modules if double row arrangement
+                if (rowArrangement === 'DOUBLE' && numModules % 2 !== 0) {
+                    continue;
+                }
+                
+                // Calculate number of EMC flaps (3 per module)
+                const numEmcFlaps = numModules * 3;
+                
+                // Calculate number of bags
+                const numBags = numEmcFlaps * bagsPerEmc;
+                
+                // Calculate filtration area (ft²)
+                const filtrationAreaFt2 = bagLength * numBags * 1.6;
+                
+                // Calculate filtration area (m²)
+                const filtrationAreaM2 = filtrationAreaFt2 * 0.0929;
+                
+                // Calculate A/C ratios
+                const acRatioImperial = airFlowAcfm / filtrationAreaFt2;
+                const acRatioMetric = airFlowM3Min / filtrationAreaM2;
+                
+                // Check if A/C ratio is within target
+                if (acRatioImperial <= targetAcImperial) {
+                    bestOption = {
+                        numModules,
+                        bagLength,
+                        numEmcFlaps,
+                        numBags,
+                        filtrationAreaFt2,
+                        filtrationAreaM2,
+                        acRatioImperial,
+                        acRatioMetric,
+                        rowArrangement
+                    };
+                    break;
+                }
+            }
+            
+            if (!bestOption) {
+                return "<p>No suitable configuration found. Consider custom solutions or multiple units.</p>";
+            }
+            
+            // Format original unit info
+            let originalUnitInfo = `Your input: ${airFlow} ${unitType}`;
+            if (unitType === 'M3/h') {
+                originalUnitInfo += ` (equivalent to ${airFlowAcfm.toFixed(2)} ACFM)`;
+            }
+            
+            // Format result
+            return `
+                <h2>Recommended Modular Baghouse Configuration</h2>
+                <table>
+                    <tr>
+                        <th colspan="2">Configuration</th>
+                    </tr>
+                    <tr>
+                        <td>Row Arrangement</td>
+                        <td>${bestOption.rowArrangement}</td>
+                    </tr>
+                    <tr>
+                        <td>Number of Modules</td>
+                        <td>${bestOption.numModules}</td>
+                    </tr>
+                    <tr>
+                        <td>Bag Length</td>
+                        <td>${bestOption.bagLength} ft</td>
+                    </tr>
+                    <tr>
+                        <td>Number of EMC Flaps</td>
+                        <td>${bestOption.numEmcFlaps}</td>
+                    </tr>
+                    <tr>
+                        <td>Number of Bags</td>
+                        <td>${bestOption.numBags}</td>
+                    </tr>
+                    <tr>
+                        <td>Total Filtration Area</td>
+                        <td>${bestOption.filtrationAreaFt2.toFixed(2)} ft² (${bestOption.filtrationAreaM2.toFixed(2)} m²)</td>
+                    </tr>
+                </table>
+
+                <h3>A/C Ratio Metrics</h3>
+                <table>
+                    <tr>
+                        <td>A/C Ratio (Imperial)</td>
+                        <td>${bestOption.acRatioImperial.toFixed(2)} ft/min (Target: ≤ ${targetAcImperial})</td>
+                    </tr>
+                    <tr>
+                        <td>A/C Ratio (Metric)</td>
+                        <td>${bestOption.acRatioMetric.toFixed(2)} m/min (Target: ≤ ${targetAcMetric.toFixed(2)})</td>
+                    </tr>
+                </table>
+
+                <h3>Input Information</h3>
+                <p>${originalUnitInfo}</p>
+                <p>Row Arrangement: ${rowArrangement}</p>
+                <p>Design Type: Modular</p>
+                <p>Target A/C Ratio: ${targetAcImperial} ft/min</p>
+
+                <h3>Notes</h3>
+                <ul>
+                    <li>This configuration meets the A/C ratio requirement of ≤ ${targetAcImperial} ft/min</li>
+                    <li>The configuration uses the minimum number of modules needed</li>
+                    <li>Number of bags is calculated as: EMC flaps × 75</li>
+                    <li>Number of EMC flaps is calculated as: Total modules × 3</li>
+                    ${rowArrangement === 'DOUBLE' ? '<li>For double row arrangements, the number of modules must be even</li>' : ''}
+                </ul>
+            `;
+        }
+        
+        function calculateBoltWeldBaghouse(airFlow, unitType, rowArrangement, bagLength, bagsInRow, targetAcRatio) {
+            // Convert to m³/h if input is in ACFM
+            let airFlowM3h;
+            if (unitType === 'ACFM') {
+                airFlowM3h = airFlow * 1.699;
+            } else {
+                airFlowM3h = airFlow;
+            }
+            
+            // Convert to m³/min for A/C ratio calculation
+            const airFlowM3Min = airFlowM3h / 60;
+            
+            // Calculate filter area constant per module
+            const filterAreaPerModule = 0.518362788 * 5 * bagsInRow * bagLength;
+            
+            // Find the smallest configuration that meets the A/C ratio requirement
+            let bestOption = null;
+            
+            for (let numModules = 1; numModules <= 20; numModules++) {
+                // Skip odd numbers of modules if double row arrangement
+                if (rowArrangement === 'DOUBLE' && numModules % 2 !== 0) {
+                    continue;
+                }
+                
+                // Calculate total filter area
+                const totalFilterArea = filterAreaPerModule * numModules;
+                
+                // Calculate A/C ratio
+                const acRatio = airFlowM3Min / totalFilterArea;
+                
+                // Check if A/C ratio is within target
+                if (acRatio <= targetAcRatio) {
+                    bestOption = {
+                        numModules,
+                        bagLength,
+                        bagsInRow,
+                        totalFilterArea,
+                        acRatio,
+                        rowArrangement
+                    };
+                    break;
+                }
+            }
+            
+            if (!bestOption) {
+                return "<p>No suitable configuration found. Consider custom solutions or multiple units.</p>";
+            }
+            
+            // Calculate total number of bags
+            const totalBags = bestOption.numModules * 5 * bestOption.bagsInRow;
+            
+            // Format result
+            return `
+                <h2>Recommended Bolt/Weld Baghouse Configuration</h2>
+                <table>
+                    <tr>
+                        <th colspan="2">Configuration</th>
+                    </tr>
+                    <tr>
+                        <td>Row Arrangement</td>
+                        <td>${bestOption.rowArrangement}</td>
+                    </tr>
+                    <tr>
+                        <td>Number of EMC Modules</td>
+                        <td>${bestOption.numModules}</td>
+                    </tr>
+                    <tr>
+                        <td>Bag Length</td>
+                        <td>${bestOption.bagLength} m</td>
+                    </tr>
+                    <tr>
+                        <td>Bags per Row</td>
+                        <td>${bestOption.bagsInRow}</td>
+                    </tr>
+                    <tr>
+                        <td>Total Number of Bags</td>
+                        <td>${totalBags}</td>
+                    </tr>
+                    <tr>
+                        <td>Total Filter Area</td>
+                        <td>${bestOption.totalFilterArea.toFixed(2)} m²</td>
+                    </tr>
+                </table>
+
+                <h3>A/C Ratio Metrics</h3>
+                <table>
+                    <tr>
+                        <td>A/C Ratio</td>
+                        <td>${bestOption.acRatio.toFixed(4)} m/min (Target: ≤ ${targetAcRatio})</td>
+                    </tr>
+                </table>
+
+                <h3>Input Information</h3>
+                <p>Air Flow: ${airFlow} ${unitType} (equivalent to ${airFlowM3h.toFixed(2)} m³/h)</p>
+                <p>Row Arrangement: ${rowArrangement}</p>
+                <p>Design Type: Bolt/Weld</p>
+                <p>Target A/C Ratio: ${targetAcRatio} m/min</p>
+
+                <h3>Notes</h3>
+                <ul>
+                    <li>This configuration meets the A/C ratio requirement of ≤ ${targetAcRatio} m/min</li>
+                    <li>The configuration uses the minimum number of modules needed</li>
+                    <li>Filter area is calculated as: 0.518362788 × 5 × ${bagsInRow} × ${bagLength} × ${bestOption.numModules}</li>
+                    <li>Total number of bags: ${bestOption.numModules} × 5 × ${bagsInRow}</li>
+                </ul>
+            `;
+        }
+    </script>
+</body>
+</html>
